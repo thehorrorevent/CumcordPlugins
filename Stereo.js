@@ -14,9 +14,9 @@ export default () => {
         this.conn.setTransportOptions = function (obj) {
           if (obj.audioEncoder) {
             obj.audioEncoder.params = {
-              stereo: "4",
+              stereo: "2",
             }
-            obj.audioEncoder.channels = 4;
+            obj.audioEncoder.channels = 2;
           }
           if (obj.fec) {
             obj.fec = false;
@@ -24,8 +24,6 @@ export default () => {
           if (obj.encodingVoiceBitRate < 960000) {
               obj.encodingVoiceBitRate = 398000;
           }
-          this.origin(obj);
-          window.sound = this;
           return setTransportOptions.call(this, obj);
         }
       })
