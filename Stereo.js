@@ -1,35 +1,50 @@
-// 101% not Afys Stereo plugin
+// 101% not Afys Stereo plugin then modified
 
 import { after } from "@cumcord/patcher";
-import { findByPrototypes } from "@cumcord/modules/webpack";
+import { findByUniqueProperties } from "@cumcord/modules/webpack";
 
 export default () => {
-  let voiceModule = findByPrototypes("setSelfDeaf");
-  let voicePatch;
+  let VoiceEngine = findByUniqueProperties('getVoiceEngine')
+  let VoiceConnection = VoiceEngine.VoiceConnection
+  let StereoSound;
 
   return {
     onLoad() {
-      voicePatch = after("initialize", voiceModule.prototype, function(args, resp){
-        const setTransportOptions = this.conn.setTransportOptions;
-        this.conn.setTransportOptions = function (obj) {
-          if (obj.audioEncoder) {
-            obj.audioEncoder.params = {
-              stereo: "2",
+
+        StereoSound = after('initialize', VoiceEngine.getVoiceEngine, function(args, resp){
+            class Stereo extends VoiceConnection {
+                constructor(a,b,c,d,e,f,g) {
+                    super(a,b,c,d,e,f,g);
+                    this.origin = super.setTransportOptions;
+                    super.setRemoteUserCanHavePriority(Client, true)
+                }
+                setTransportOptions(obj) {
+                    obj.attenuation = true;
+                    obj.attenuateWhileSpeakingSelf = true;
+                    obj.attenuateWhileSpeakingOthers = false;
+                    obj.attenuationFactor = 200;
+                    obj.prioritySpeakerDucking = 0;
+
+                    if (obj.audioEncoder) {
+                        obj.audioEncoder.channels = 8;
+                        obj.audioEncoder.freq = 96000;
+                        obj.audioEncoder.rate = 910000
+                    }
+                    if (obj.fec) {
+                        obj.fec = false
+                    }
+                    if (obj.encodingVoiceBitRate) {
+                        obj.encodingVoiceBitRate = 960000;
+                    }
+                    this.origin(obj)
+                    window.sound = this;
+                    return this.setTransportOptions(this, obj)
+                }
             }
-            obj.audioEncoder.channels = 2;
-          }
-          if (obj.fec) {
-            obj.fec = false;
-          };
-          if (obj.encodingVoiceBitRate < 960000) {
-              obj.encodingVoiceBitRate = 910000;
-          }
-          return setTransportOptions.call(this, obj);
-        }
-      })
+        })
     },
     onUnload() {
-      voicePatch();
+      StereoSound();
     }
   }
 };
