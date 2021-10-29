@@ -14,9 +14,9 @@ export default () => {
         this.conn.setTransportOptions = function (obj) {
           if (obj.audioEncoder) {
             obj.audioEncoder.params = {
-              stereo: "4",
+              stereo: "2",
             }
-            obj.audioEncoder.channels = 4;
+            obj.audioEncoder.channels = 2;
           }
           if (obj.fec) {
             obj.fec = false;
