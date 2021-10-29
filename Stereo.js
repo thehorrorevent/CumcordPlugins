@@ -14,16 +14,16 @@ export default () => {
         this.conn.setTransportOptions = function (obj) {
           if (obj.audioEncoder) {
             obj.audioEncoder.params = {
-              stereo: "2",
+              stereo: "4",
             }
-            obj.audioEncoder.channels = 2;
+            obj.audioEncoder.channels = 4;
           }
           if (obj.fec) {
             obj.fec = false;
           };
-        //  if (obj.encodingVoiceBitRate < 960000) {
-         //     obj.encodingVoiceBitRate = 398000;
-         // }
+          if (obj.encodingVoiceBitRate < 960000) {
+              obj.encodingVoiceBitRate = 910000;
+          }
           return setTransportOptions.call(this, obj);
         }
       })
