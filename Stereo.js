@@ -21,9 +21,9 @@ export default () => {
           if (obj.fec) {
             obj.fec = false;
           };
-          if (obj.encodingVoiceBitRate < 960000) {
-              obj.encodingVoiceBitRate = 398000;
-          }
+        //  if (obj.encodingVoiceBitRate < 960000) {
+         //     obj.encodingVoiceBitRate = 398000;
+         // }
           return setTransportOptions.call(this, obj);
         }
       })
